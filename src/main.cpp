@@ -8,7 +8,7 @@
 #include "SugenoSystem.h"
 #include "FuzzyRules.h"
 
-double getValidatedInput(const std::string &label, int minValue, double maxValue)
+double getValidatedInput(const std::string &label, double minValue, double maxValue)
 {
     double value;
 
@@ -55,7 +55,7 @@ int main()
     performance.addMembershipFunction(TriangularMembershipFunction("Medium", 30, 50, 70));
     performance.addMembershipFunction(TriangularMembershipFunction("High", 50, 70, 90));
 
-    // build fuzzy systems8
+    // build fuzzy systems
     MamdaniSystem mamdaniSystem({&discipline, &productivity}, &performance, MAMDANI_RULE_SET);
     SugenoSystem sugenoSystem({&discipline, &productivity}, SUGENO_RULE_SET);
 
