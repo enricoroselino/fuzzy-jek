@@ -39,24 +39,23 @@ double getValidatedInput(const std::string &label, int minValue, double maxValue
 
 int main()
 {
-
-    // --------------------- DEFINE FUZZY VARIABLES ---------------------
+    // Define fuzzy variables
     FuzzyVariable discipline("Discipline");
-    discipline.addMembershipFunction({"Low", 1, 3, 5});
-    discipline.addMembershipFunction({"Medium", 3, 5, 7});
-    discipline.addMembershipFunction({"High", 5, 7, 9});
+    discipline.addMembershipFunction(TriangularMembershipFunction("Low", 1, 3, 5));
+    discipline.addMembershipFunction(TriangularMembershipFunction("Medium", 3, 5, 7));
+    discipline.addMembershipFunction(TriangularMembershipFunction("High", 5, 7, 9));
 
     FuzzyVariable productivity("Productivity");
-    productivity.addMembershipFunction({"Low", 1, 3, 5});
-    productivity.addMembershipFunction({"Medium", 3, 5, 7});
-    productivity.addMembershipFunction({"High", 5, 7, 9});
+    productivity.addMembershipFunction(TriangularMembershipFunction("Low", 1, 3, 5));
+    productivity.addMembershipFunction(TriangularMembershipFunction("Medium", 3, 5, 7));
+    productivity.addMembershipFunction(TriangularMembershipFunction("High", 5, 7, 9));
 
     FuzzyVariable performance("Performance");
-    performance.addMembershipFunction({"Low", 10, 30, 50});
-    performance.addMembershipFunction({"Medium", 30, 50, 70});
-    performance.addMembershipFunction({"High", 50, 70, 90});
+    performance.addMembershipFunction(TriangularMembershipFunction("Low", 10, 30, 50));
+    performance.addMembershipFunction(TriangularMembershipFunction("Medium", 30, 50, 70));
+    performance.addMembershipFunction(TriangularMembershipFunction("High", 50, 70, 90));
 
-    // build fuzzy systems
+    // build fuzzy systems8
     MamdaniSystem mamdaniSystem({&discipline, &productivity}, &performance, MAMDANI_RULE_SET);
     SugenoSystem sugenoSystem({&discipline, &productivity}, SUGENO_RULE_SET);
 
