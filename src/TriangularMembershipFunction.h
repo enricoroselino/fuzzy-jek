@@ -22,4 +22,9 @@ public:
             return (x - left) / (center - left);
         return (right - x) / (right - center);
     }
+
+    double getCentroid() const
+    {
+        return center;
+    }
 };

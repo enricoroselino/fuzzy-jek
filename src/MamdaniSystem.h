@@ -2,6 +2,7 @@
 #include <vector>
 #include <unordered_map>
 #include <algorithm>
+#include <stdexcept>
 #include "FuzzyVariable.h"
 #include "MamdaniRule.h"
 
@@ -12,22 +13,19 @@ private:
     FuzzyVariable *outputVariable;
     std::vector<MamdaniRule> rules;
 
-    std::unordered_map<std::string, double> centroidValues = {
-        {"Low", 30.0},
-        {"Medium", 50.0},
-        {"High", 70.0}};
-
 public:
     MamdaniSystem(
         const std::vector<FuzzyVariable *> &inputs,
         FuzzyVariable *output,
         const std::vector<MamdaniRule> &ruleSet)
-        : inputVariables(inputs), outputVariable(output), rules(ruleSet)
+        : inputVariables(inputs),
+          outputVariable(output),
+          rules(ruleSet)
     {
         if (inputs.empty())
             throw std::runtime_error("MamdaniSystem requires at least one input variable.");
 
-        if (output == nullptr)
+        if (!output)
             throw std::runtime_error("MamdaniSystem requires an output variable.");
 
         if (ruleSet.empty())
@@ -45,18 +43,25 @@ public:
 
             for (const auto &ant : rule.antecedents)
             {
-                auto it = std::find_if(inputVariables.begin(), inputVariables.end(),
-                                       [&](auto *var)
-                                       { return var->variableName == ant.variable; });
+                auto it = std::find_if(
+                    inputVariables.begin(), inputVariables.end(),
+                    [&](auto *var)
+                    { return var->variableName == ant.variable; });
 
                 if (it == inputVariables.end())
-                    throw std::runtime_error("Unknown variable in rule antecedent: " + ant.variable);
+                    throw std::runtime_error("Unknown variable: " + ant.variable);
 
-                double mu = (*it)->getMembershipValue(ant.membershipName, crispInputs.at((*it)->variableName));
+                double inputValue = crispInputs.at((*it)->variableName);
+                double mu = (*it)->getMembershipValue(ant.membershipName, inputValue);
+
                 ruleStrength = std::min(ruleStrength, mu);
             }
 
-            numerator += ruleStrength * centroidValues.at(rule.consequent.membershipName);
+            // ★ AUTO-CENTROID EXTRACTED FROM OUTPUT MEMBERSHIP FUNCTION
+            const auto *mf = outputVariable->getFunction(rule.consequent.membershipName);
+            double centroid = mf->getCentroid();
+
+            numerator += ruleStrength * centroid;
             denominator += ruleStrength;
         }
 

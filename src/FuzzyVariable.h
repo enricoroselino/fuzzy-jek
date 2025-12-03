@@ -1,23 +1,39 @@
 #pragma once
 #include <string>
-#include <unordered_map>
+#include <vector>
+#include <stdexcept>
 #include "TriangularMembershipFunction.h"
 
 class FuzzyVariable
 {
 public:
     std::string variableName;
-    std::unordered_map<std::string, TriangularMembershipFunction> membershipFunctions;
+    std::vector<TriangularMembershipFunction> functions;
 
-    explicit FuzzyVariable(const std::string &name) : variableName(name) {}
+    FuzzyVariable(const std::string &name)
+        : variableName(name) {}
 
     void addMembershipFunction(const TriangularMembershipFunction &mf)
     {
-        membershipFunctions.emplace(mf.name, mf);
+        functions.push_back(mf);
     }
 
-    double getMembershipValue(const std::string &membershipName, double crispValue) const
+    double getMembershipValue(const std::string &functionName, double x) const
     {
-        return membershipFunctions.at(membershipName).compute(crispValue);
+        for (const auto &mf : functions)
+            if (mf.name == functionName)
+                return mf.compute(x);
+
+        throw std::runtime_error("Membership function not found: " + functionName);
+    }
+
+    // ★ NEW: allow MamdaniSystem to read the centroid
+    const TriangularMembershipFunction *getFunction(const std::string &name) const
+    {
+        for (const auto &mf : functions)
+            if (mf.name == name)
+                return &mf;
+
+        throw std::runtime_error("Membership function not found: " + name);
     }
 };
