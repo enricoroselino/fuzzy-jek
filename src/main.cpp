@@ -72,6 +72,9 @@ int main()
     double sugenoResult = sugenoSystem.evaluate(crispInputs);
 
     // --------------------- OUTPUT RESULTS ---------------------
+    mamdaniSystem.printRulePredicates(crispInputs);
+    sugenoSystem.printRulePredicates(crispInputs);
+
     std::cout << "\n=== PERFORMANCE RESULTS ===\n";
     std::cout << "Mamdani Output : " << mamdaniResult << "\n";
     std::cout << "Sugeno Output  : " << sugenoResult << "\n";
